@@ -1,5 +1,4 @@
 import 'package:date_picker_timeline/date_picker_widget.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_to_do_app/services/notification_services.dart';
@@ -44,7 +43,7 @@ class HomePageState extends State<HomePage> {
         children: [
           _addTaskBar(),
           _addDateBar(),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           _showTasks()
         ],
       ),
@@ -57,21 +56,17 @@ class HomePageState extends State<HomePage> {
         return ListView.builder(
             itemCount: _taskController.taskList.length,
             itemBuilder: (_, index) {
-              if (kDebugMode) {
-                print(_taskController.taskList.length);
-              }
+              print(_taskController.taskList.length);
               Task task = _taskController.taskList[index];
-              if (kDebugMode) {
-                print(task.toJson());
-              }
+              print(task.toJson());
               if (task.repeat == 'Daily') {
-                DateTime date =
-                    DateFormat.jm().parse(task.startTime.toString());
+                DateTime date = DateFormat.jm().parse(task.startTime.toString());
                 var myTime = DateFormat("HH:mm").format(date);
                 notifyHelper.scheduledNotification(
-                    int.parse(myTime.toString().split(":")[0]),
+                  int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
-                    task);
+                  task
+                );
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
@@ -85,13 +80,13 @@ class HomePageState extends State<HomePage> {
                     ]))));
               }
               if (task.date == DateFormat.yMd().format(_selectedDate)) {
-                DateTime date =
-                    DateFormat.jm().parse(task.startTime.toString());
+                DateTime date = DateFormat.jm().parse(task.startTime.toString());
                 var myTime = DateFormat("HH:mm").format(date);
                 notifyHelper.scheduledNotification(
                     int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
-                    task);
+                    task
+                );
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
@@ -133,7 +128,7 @@ class HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(10),
                     color:
                         Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
-            const Spacer(),
+            Spacer(),
             task.isCompleted == 1
                 ? Container()
                 : _bottomSheetButton(
@@ -154,7 +149,7 @@ class HomePageState extends State<HomePage> {
               clr: Colors.red[300]!,
               context: context,
             ),
-            const SizedBox(
+            SizedBox(
               height: 20,
             ),
             _bottomSheetButton(
@@ -166,7 +161,7 @@ class HomePageState extends State<HomePage> {
               isClose: true,
               context: context,
             ),
-            const SizedBox(
+            SizedBox(
               height: 10,
             ),
           ])),
@@ -216,17 +211,17 @@ class HomePageState extends State<HomePage> {
           selectionColor: primaryClr,
           selectedTextColor: Colors.white,
           dateTextStyle: GoogleFonts.lato(
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)),
           dayTextStyle: GoogleFonts.lato(
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)),
           monthTextStyle: GoogleFonts.lato(
-              textStyle: const TextStyle(
+              textStyle: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
@@ -242,23 +237,27 @@ class HomePageState extends State<HomePage> {
         margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                DateFormat.yMMMMd().format(DateTime.now()),
-                style: subHeadingStyle,
+          Expanded(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.yMMMMd().format(DateTime.now()),
+                    style: subHeadingStyle,
+                  ),
+                  Text(
+                    "Today",
+                    style: headingStyle,
+                  )
+                ],
               ),
-              Text(
-                "Today",
-                style: headingStyle,
-              )
-            ],
+            ),
           ),
           MyButton(
             label: "+ Add Task",
             onTap: () async {
-              await Get.to(() => const AddTaskPage());
+              await Get.to(() => AddTaskPage());
               _taskController.getTasks();
             },
           ),
@@ -272,7 +271,7 @@ class HomePageState extends State<HomePage> {
       leading: GestureDetector(
           onTap: () {
             ThemeService().switchTheme();
-            NotifyHelper notifyHelper;
+            var notifyHelper;
             notifyHelper = NotifyHelper();
             notifyHelper.displayNotification(
                 title: "Theme Changed",
@@ -287,7 +286,7 @@ class HomePageState extends State<HomePage> {
             size: 20,
             color: Get.isDarkMode ? Colors.white : Colors.black,
           )),
-      actions: const [
+      actions: [
         CircleAvatar(
           backgroundImage: AssetImage("images/profile.png"),
         ),
