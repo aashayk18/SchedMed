@@ -9,11 +9,9 @@ class TaskController extends GetxController {
     super.onReady();
   }
 
-  //var taskList = <Task>[].obs;
+  var taskList = <Task>[].obs;
 
-  final RxList<Task> taskList = List<Task>.empty().obs;
-
-  Future<int> addTask({required Task? task}) async {
+  Future<int> addTask({Task? task}) async {
     return await DBHelper.insert(task);
   }
 
@@ -32,4 +30,5 @@ class TaskController extends GetxController {
     await DBHelper.update(id);
     getTasks();
   }
+
 }
