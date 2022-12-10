@@ -11,12 +11,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DBHelper.initDb();
   await GetStorage.init();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -26,6 +24,7 @@ class MyApp extends StatelessWidget {
         theme: Themes.light,
         darkTheme: Themes.dark,
         themeMode: ThemeService().theme,
-        home: const HomePage());
+
+        home: HomePage());
   }
 }
