@@ -42,7 +42,7 @@ class HomePageState extends State<HomePage> {
         children: [
           _addTaskBar(),
           _addDateBar(),
-          SizedBox(height: 10),
+          SizedBox(height: 10.5), // I made an edit here
           _showTasks()
         ],
       ),
