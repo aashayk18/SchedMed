@@ -38,33 +38,38 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
-      // adding the bottomnavigation bar
-       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xFFd1fcd1),
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home_filled,
-                size: 35,
-                color: Color(0xFF0185C1),
-              ),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.local_hospital_rounded,
-                size: 35,
-                color: Color(0xFF0185C1),
-              ),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person_add_alt_1,
-                size: 35,
-                color: Color(0xFF0185c1),
-              ),
-              label: ''),
-        ],
+      
+// adding the bottomnavigation bar
+      bottomNavigationBar: SizedBox(
+        height: 65,
+        child: BottomNavigationBar(
+          backgroundColor: Color(0xFFEDFFED),
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_filled,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.local_hospital_rounded,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.person_rounded,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+          ],
+        ),
       ), 
+      
       body: Column(
         children: [
           _addTaskBar(),
