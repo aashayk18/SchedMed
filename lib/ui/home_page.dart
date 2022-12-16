@@ -39,7 +39,7 @@ class HomePageState extends State<HomePage> {
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
       
-// adding the bottomnavigation bar
+// adding the bottom navigation bar
       bottomNavigationBar: SizedBox(
         height: 65,
         child: BottomNavigationBar(
