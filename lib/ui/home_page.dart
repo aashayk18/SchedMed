@@ -285,12 +285,15 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          MyButton(
-            label: "+ Add Task",
-            onTap: () async {
-              await Get.to(() => AddTaskPage());
-              _taskController.getTasks();
-            },
+          SizedBox(
+            width: 60,
+            child: MyButton(
+              label: "+",
+              onTap: () async {
+                await Get.to(() => const AddTaskPage());
+                _taskController.getTasks();
+              },
+            ),
           ),
         ]));
   }
