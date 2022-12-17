@@ -12,6 +12,7 @@ const Color white = Colors.white;
 const primaryClr = bluishClr;
 const Color darkGreyClr = Color(0xFF121212);
 Color darkHeaderClr = Color(0xFF424242);
+const Color themeClr = Color(0xFFEDFFED);
 
 class Themes {
   static final light = ThemeData(
