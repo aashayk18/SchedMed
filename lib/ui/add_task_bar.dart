@@ -51,17 +51,21 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                   MyInputField(title: "Title", hint: "Enter your title", controller: _titleController),
                   MyInputField(title: "Note", hint: "Enter your note", controller: _noteController),
-                  MyInputField(
-                    title: "Date",
-                    hint: DateFormat.yMd().format(_selectedDate),
-                      widget: IconButton(
-                      icon: Icon(Icons.calendar_today_outlined,
-                          color: Colors.grey),
-                      onPressed: () {
-                        _getDateFromUser();
-                      },
-                    ),
+                  SizedBox(height: 18), // done the changes here
+                  const Text(
+                    "Reference",
+                    style: TextStyle(fontSize: 18),
+                    textAlign: TextAlign.left,
                   ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 60,
+                          child: MyButton(label: "+", onTap: () {}),
+                        )
+                      ]), //uptil here
                   Row(children: [
                     Expanded(
                         child: MyInputField(
