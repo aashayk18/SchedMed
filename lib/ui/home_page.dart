@@ -28,6 +28,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
@@ -38,12 +39,12 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
-      
-// adding the bottom navigation bar
+
+      // adding the bottom navigation bar
       bottomNavigationBar: SizedBox(
         height: 65,
         child: BottomNavigationBar(
-          backgroundColor: Color(0xFFEDFFED),
+          backgroundColor: Color(0xFFD3D3D3),
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(
@@ -68,18 +69,20 @@ class HomePageState extends State<HomePage> {
                 label: ''),
           ],
         ),
-      ), 
-      
+      ),
+
       body: Column(
         children: [
           _addTaskBar(),
           _addDateBar(),
-          SizedBox(height: 10), // I made an edit here
+          SizedBox(height: 10),
           _showTasks()
         ],
       ),
     );
   }
+
+
 
   _showTasks() {
     return Expanded(
@@ -94,21 +97,21 @@ class HomePageState extends State<HomePage> {
                 DateTime date = DateFormat.jm().parse(task.startTime.toString());
                 var myTime = DateFormat("HH:mm").format(date);
                 notifyHelper.scheduledNotification(
-                  int.parse(myTime.toString().split(":")[0]),
+                    int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
-                  task
+                    task
                 );
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
                         child: FadeInAnimation(
                             child: Row(children: [
-                      GestureDetector(
-                          onTap: () {
-                            _showBottomSheet(context, task);
-                          },
-                          child: TaskTile(task))
-                    ]))));
+                              GestureDetector(
+                                  onTap: () {
+                                    _showBottomSheet(context, task);
+                                  },
+                                  child: TaskTile(task))
+                            ]))));
               }
               if (task.date == DateFormat.yMd().format(_selectedDate)) {
                 DateTime date = DateFormat.jm().parse(task.startTime.toString());
@@ -123,12 +126,12 @@ class HomePageState extends State<HomePage> {
                     child: SlideAnimation(
                         child: FadeInAnimation(
                             child: Row(children: [
-                      GestureDetector(
-                          onTap: () {
-                            _showBottomSheet(context, task);
-                          },
-                          child: TaskTile(task))
-                    ]))));
+                              GestureDetector(
+                                  onTap: () {
+                                    _showBottomSheet(context, task);
+                                  },
+                                  child: TaskTile(task))
+                            ]))));
               } else {
                 return Container();
               }
@@ -158,19 +161,19 @@ class HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color:
-                        Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
+                    Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
             Spacer(),
             task.isCompleted == 1
                 ? Container()
                 : _bottomSheetButton(
-                    label: "Task Completed",
-                    onTap: () {
-                      _taskController.markTaskCompleted(task.id!);
-                      Get.back();
-                    },
-                    clr: primaryClr,
-                    context: context,
-                  ),
+              label: "Task Completed",
+              onTap: () {
+                _taskController.markTaskCompleted(task.id!);
+                Get.back();
+              },
+              clr: primaryClr,
+              context: context,
+            ),
             _bottomSheetButton(
               label: "Delete Task",
               onTap: () {
@@ -201,10 +204,10 @@ class HomePageState extends State<HomePage> {
 
   _bottomSheetButton(
       {required String label,
-      required Function()? onTap,
-      required Color clr,
-      bool isClose = false,
-      required BuildContext context}) {
+        required Function()? onTap,
+        required Color clr,
+        bool isClose = false,
+        required BuildContext context}) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -216,8 +219,8 @@ class HomePageState extends State<HomePage> {
                   width: 2,
                   color: isClose == true
                       ? Get.isDarkMode
-                          ? Colors.grey[600]!
-                          : Colors.grey[300]!
+                      ? Colors.grey[600]!
+                      : Colors.grey[300]!
                       : clr),
               borderRadius: BorderRadius.circular(20),
               color: isClose == true ? Colors.transparent : clr,
@@ -256,10 +259,10 @@ class HomePageState extends State<HomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
-        setState(() {
-          _selectedDate = date;
-        });
-      }),
+            setState(() {
+              _selectedDate = date;
+            });
+          }),
     );
   }
 
@@ -267,7 +270,7 @@ class HomePageState extends State<HomePage> {
     return Container(
         margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
         child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(
             child: Container(
               child: Column(
@@ -285,12 +288,11 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SizedBox(
-            width: 60,
+          SizedBox(width:60,
             child: MyButton(
-              label: "+",
+              label: " + ",
               onTap: () async {
-                await Get.to(() => const AddTaskPage());
+                await Get.to(() => AddTaskPage());
                 _taskController.getTasks();
               },
             ),
