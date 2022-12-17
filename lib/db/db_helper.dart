@@ -22,7 +22,6 @@ class DBHelper {
             "CREATE TABLE $_tableName("
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "title STRING, note TEXT, date STRING, "
-                "startTime STRING, endTime STRING, "
                 "remind INTEGER, repeat STRING, "
                 "color INTEGER, "
                 "isCompleted INTEGER)",
@@ -49,7 +48,7 @@ class DBHelper {
   }
 
   static update(int id) async {
-   return await _db!.rawUpdate('''
+    return await _db!.rawUpdate('''
           UPDATE tasks 
           SET isCompleted = ?
           WHERE id =?
