@@ -49,10 +49,10 @@ class TaskTile extends StatelessWidget {
                     ),
                     SizedBox(width: 4),
                     Text(
-                      "${task!.startTime} - ${task!.endTime}",
+                      "${task!.startTime} ",
                       style: GoogleFonts.lato(
                         textStyle:
-                            TextStyle(fontSize: 13, color: Colors.grey[100]),
+                        TextStyle(fontSize: 13, color: Colors.grey[100]),
                       ),
                     ),
                   ],
