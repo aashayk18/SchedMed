@@ -5,7 +5,6 @@ import 'package:flutter_to_do_app/ui/widgets/button.dart';
 import 'package:flutter_to_do_app/ui/widgets/input_field.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
 
