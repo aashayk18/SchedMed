@@ -1,14 +1,10 @@
-# SchedMed Project
+# SchedMed 
 
-A new Flutter project.
+A Complete Solution for Your Healthcare Needs
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-### create one development section
-
 <ul>
-  <li>SchedMed is a medicine reminder app built with flutter </li>
-  <li>It reminds the user of their medicines by sending them timely alarms and notifications.</li>
+  <li>SchedMed is a medicine reminder and tracker app built with Flutter.</li>
+  <li>It reminds the user to take their medicines by sending them timely alarms and notifications.</li>
 </ul>
