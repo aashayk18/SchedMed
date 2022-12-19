@@ -1,345 +1,303 @@
-import 'package:flutter/cupertino.dart';
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_to_do_app/services/notification_services.dart';
+import 'package:flutter_to_do_app/services/theme_services.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
 import 'package:flutter_to_do_app/ui/widgets/button.dart';
-import 'package:flutter_to_do_app/ui/widgets/input_field.dart';
+import 'package:flutter_to_do_app/ui/widgets/task_tile.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
+import 'add_task_bar.dart';
 
-class AddTaskPage extends StatefulWidget {
-  const AddTaskPage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<AddTaskPage> createState() => _AddTaskPageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _AddTaskPageState extends State<AddTaskPage> {
-  final TaskController _taskController = Get.put(TaskController());
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _DosageController = TextEditingController();
+class HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
+  final _taskController = Get.put(TaskController());
+  var notifyHelper;
 
-  String _Time = DateFormat("hh:mm a").format(DateTime.now())..toString();
-  int _selectedRemind = 5;
-  List<int> remindList = [
-    5, 10, 15, 20
-  ];
-  String _selectedTypeOfMedicine = "" ;
-  List<String> TypeOfMedicineList = [
-    "Tablet", "Syrup", "Powder", "Drop(s)", "Cream", "Ointment", "Syringe"
-  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notifyHelper = NotifyHelper();
+    notifyHelper.initializeNotification();
+  }
 
-  String _selectedQuantity = "tb";
-  List<String> QuantityList = [
-    "tb", "ml", "mg", "N/A"
-  ];
-  String _selectedRepeat = "None";
-  List<String> repeatList = [
-    "None", "Daily", "Weekly", "Monthly"
-  ];
-  int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: context.theme.backgroundColor,
-        appBar: _appBar(context),
-        body: Container(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: SingleChildScrollView(
+      appBar: _appBar(context),
+      backgroundColor: context.theme.backgroundColor,
 
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "New Reminder",
-                        style: headingStyle,
-                        textAlign: TextAlign.left,
+      // adding the bottom navigation bar
+      bottomNavigationBar: SizedBox(
+        height: 65,
+        child: BottomNavigationBar(
+          backgroundColor: Color(0xFFD3D3D3),
+          items: const [
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_filled,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.local_hospital_rounded,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.person_rounded,
+                  size: 35,
+                  color: primaryClr,
+                ),
+                label: ''),
+          ],
+        ),
+      ),
 
-                      ),
-                      MyInputField(title: "Medicine Name ", hint: "Enter medicine name", controller: _titleController),
-                      SizedBox(height:0),
-                      MyInputField(title: "Instructions", hint: "Enter consumption instructions", controller: _noteController),
-                      Row(children:[
-                        Expanded(
-                            child:MyInputField(title: "Type", hint: "$_selectedTypeOfMedicine",
-
-                                widget: DropdownButton(
-                                  icon: Icon(Icons.keyboard_arrow_down,
-                                      color: Colors.grey
-                                  ),
-                                  iconSize: 32,
-                                  elevation: 4,
-                                  style: subTitleStyle,
-                                  underline:Container(height:0,),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _selectedTypeOfMedicine = newValue!;
-                                    });
-                                  },
-                                  items:TypeOfMedicineList.map<DropdownMenuItem<String>>((String? value){
-                                    return DropdownMenuItem<String>(
-                                        value: value,
-                                        child:Text(value!, style:TextStyle(color:Colors.grey))
-                                    );
-                                  }
-                                  ).toList(),
-
-                                )
-                            )),
-                        SizedBox(width:10),
-                        Expanded(
-                          child: MyInputField(title: "Dosage", hint: "", controller: _DosageController),
-                        ),
-                        SizedBox(width:10) ,
-                        Expanded(child:MyInputField(title: " ", hint: "$_selectedQuantity",
-
-                            widget: DropdownButton(
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.grey
-
-                              ),
-                              iconSize: 32,
-                              elevation: 4,
-                              style: subTitleStyle,
-                              underline:Container(height:0,),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedQuantity = newValue!;
-                                });
-                              },
-                              items:QuantityList.map<DropdownMenuItem<String>>((String? value){
-                                return DropdownMenuItem<String>(
-                                    value: value,
-                                    child:Text(value!, style:TextStyle(color:Colors.grey))
-                                );
-                              }
-                              ).toList(),
-
-                            ))),
-
-
-                      ]),
-
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          SizedBox(height: 18), // done the changes here
-                          const Text(
-                            "Reference Image",
-                            style: TextStyle(fontSize: 18),
-                            textAlign: TextAlign.left,
-                          ),
-
-                          SizedBox(width:18),
-
-                          const Text(
-                            "Schedule",
-                            style: TextStyle(fontSize: 18),
-                            textAlign: TextAlign.right,
-                          ),
-                          SizedBox(width:10),
-
-                          Icon(Icons.add),
-                        ],
-                      ),
-
-                      SizedBox(height: 14),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              child: MyButton(label: "+", onTap: () {}),
-                            ),
-                            SizedBox(width:90),
-                            Expanded(
-                                child:MyButton(label: "After Lunch",
-                                    onTap: ()=>_validateData())
-                            ),
-                            SizedBox(width:10),
-                            Expanded(child: MyButton(label: "After Dinner", onTap: ()=>_validateData())
-                            ),
-
-
-                          ]),
-
-                      // SizedBox(height:12)   ,
-                      //
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.start,
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: <Widget>[
-                      //     Text(
-                      //       'Time',
-                      //       style: TextStyle(
-                      //         fontSize: 17,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // )   ,
-
-                      Row(children:[
-                        Expanded(
-                            child: MyInputField(
-                                title: "Time",
-                                hint: _Time,
-                                widget: IconButton(
-                                    onPressed: () {
-                                      _getTimeFromUser(isStartTime: true);
-                                    },
-                                    icon: Icon(Icons.access_time_rounded,
-                                        color: Colors.grey)))),
-                      ]),
-
-
-                      SizedBox(height:0),
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(children: [
-                          Expanded(
-                              child:MyInputField(
-                                  title: "Remind", hint: "$_selectedRemind minutes early",
-                                  widget: DropdownButton(
-                                    icon: Icon(Icons.keyboard_arrow_down,
-                                        color: Colors.grey),
-                                    iconSize: 32,
-                                    elevation: 4,
-                                    style: subTitleStyle,
-                                    underline:Container(height:0,),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _selectedRemind = int.parse(newValue!);
-                                      });
-                                    },
-                                    items:remindList.map<DropdownMenuItem<String>>((int value){
-                                      return DropdownMenuItem<String>(
-                                          value: value.toString(),
-                                          child:Text(value.toString())
-                                      );
-                                    }
-                                    ).toList(),
-
-                                  )
-                              )),
-                          SizedBox(width:12),
-                          Expanded(
-                              child: MyInputField(title: "Repeat", hint: "$_selectedRepeat",
-                                  widget: DropdownButton(
-                                    icon: Icon(Icons.keyboard_arrow_down,
-                                        color: Colors.grey
-
-                                    ),
-                                    iconSize: 32,
-                                    elevation: 4,
-                                    style: subTitleStyle,
-                                    underline:Container(height:0,),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _selectedRepeat = newValue!;
-                                      });
-                                    },
-                                    items:repeatList.map<DropdownMenuItem<String>>((String? value){
-                                      return DropdownMenuItem<String>(
-                                          value: value,
-                                          child:Text(value!, style:TextStyle(color:Colors.grey))
-                                      );
-                                    }
-                                    ).toList(),
-
-                                  )
-                              )),
-                        ]),
-                      ),
-                      SizedBox(height: 10),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            _colorPalette(),
-                            MyButton(label: "Add Reminder", onTap: ()=>_validateData())
-                          ]
-                      )
-                    ]))));
-  }
-
-  _validateData() {
-    if(_titleController.text.isNotEmpty&&_noteController.text.isNotEmpty){
-      _addTaskToDb();
-      Get.back();
-    } else if(_titleController.text.isEmpty||_noteController.text.isEmpty){
-      Get.snackbar("Required", "All fields are required!",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.white,
-          colorText: pinkClr,
-          icon: Icon(Icons.warning_amber_rounded,
-            color: Colors.red,
-          )
-      );
-    }
-  }
-
-  _addTaskToDb() async {
-    int value = await _taskController.addTask(
-        task: Task (
-          note: _noteController.text,
-          title: _titleController.text,
-          date: DateFormat.yMd().format(_selectedDate),
-
-          startTime: _Time,
-
-          remind: _selectedRemind,
-          repeat: _selectedRepeat,
-          color: _selectedColor,
-          isCompleted: 0,
-        )
-    );
-    print("My id is " "$value");
-  }
-  _colorPalette() {
-
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
+      body: Column(
         children: [
-          Text("Color",
-            style: titleStyle,
-          ),
-          SizedBox(height: 6.0),
-          Wrap(
-              children: List<Widget>.generate(
-                  3,
-                      (int index) {
-                    return GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          _selectedColor = index;
-                          print("$index");
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: index == 0?primaryClr:index==1?pinkClr:yellowClr,
-                          child: _selectedColor==index?Icon(Icons.done,
-                            color: Colors.white,
-                            size: 16,
-                          ):Container(),
-                        ),
-                      ),
-                    );
-                  }
-              )
-          )
-
-        ]
+          _addTaskBar(),
+          _addDateBar(),
+          SizedBox(height: 10),
+          _showTasks()
+        ],
+      ),
     );
+  }
+
+
+
+  _showTasks() {
+    return Expanded(
+      child: Obx(() {
+        return ListView.builder(
+            itemCount: _taskController.taskList.length,
+            itemBuilder: (_, index) {
+              print(_taskController.taskList.length);
+              Task task = _taskController.taskList[index];
+              print(task.toJson());
+              if (task.repeat == 'Daily') {
+                DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                var myTime = DateFormat("HH:mm").format(date);
+                notifyHelper.scheduledNotification(
+                    int.parse(myTime.toString().split(":")[0]),
+                    int.parse(myTime.toString().split(":")[1]),
+                    task
+                );
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                        child: FadeInAnimation(
+                            child: Row(children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    _showBottomSheet(context, task);
+                                  },
+                                  child: TaskTile(task))
+                            ]))));
+              }
+              if (task.date == DateFormat.yMd().format(_selectedDate)) {
+                DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                var myTime = DateFormat("HH:mm").format(date);
+                notifyHelper.scheduledNotification(
+                    int.parse(myTime.toString().split(":")[0]),
+                    int.parse(myTime.toString().split(":")[1]),
+                    task
+                );
+                return AnimationConfiguration.staggeredList(
+                    position: index,
+                    child: SlideAnimation(
+                        child: FadeInAnimation(
+                            child: Row(children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    _showBottomSheet(context, task);
+                                  },
+                                  child: TaskTile(task))
+                            ]))));
+              } else {
+                return Container();
+              }
+              // return GestureDetector(
+              //   onTap:() {
+              //     _taskController.delete(_taskController.taskList[index]);
+              //     _taskController.getTasks();
+              //   },
+              // );
+            });
+      }),
+    );
+  }
+
+  _showBottomSheet(BuildContext context, Task task) {
+    Get.bottomSheet(
+      Container(
+          padding: const EdgeInsets.only(top: 4),
+          height: task.isCompleted == 1
+              ? MediaQuery.of(context).size.height * 0.24
+              : MediaQuery.of(context).size.height * 0.32,
+          color: Get.isDarkMode ? darkGreyClr : Colors.white,
+          child: Column(children: [
+            Container(
+                height: 6,
+                width: 120,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color:
+                    Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
+            Spacer(),
+            task.isCompleted == 1
+                ? Container()
+                : _bottomSheetButton(
+              label: "Task Completed",
+              onTap: () {
+                _taskController.markTaskCompleted(task.id!);
+                Get.back();
+              },
+              clr: primaryClr,
+              context: context,
+            ),
+            _bottomSheetButton(
+              label: "Delete Task",
+              onTap: () {
+                _taskController.delete(task);
+                Get.back();
+              },
+              clr: Colors.red[300]!,
+              context: context,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            _bottomSheetButton(
+              label: "Close",
+              onTap: () {
+                Get.back();
+              },
+              clr: Colors.red[300]!,
+              isClose: true,
+              context: context,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          ])),
+    );
+  }
+
+  _bottomSheetButton(
+      {required String label,
+        required Function()? onTap,
+        required Color clr,
+        bool isClose = false,
+        required BuildContext context}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            height: 55,
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              border: Border.all(
+                  width: 2,
+                  color: isClose == true
+                      ? Get.isDarkMode
+                      ? Colors.grey[600]!
+                      : Colors.grey[300]!
+                      : clr),
+              borderRadius: BorderRadius.circular(20),
+              color: isClose == true ? Colors.transparent : clr,
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: isClose
+                    ? titleStyle
+                    : titleStyle.copyWith(color: Colors.white),
+              ),
+            )));
+  }
+
+  _addDateBar() {
+    return Container(
+      margin: const EdgeInsets.only(top: 20, left: 20, right: 10),
+      child: DatePicker(DateTime.now(),
+          height: 100,
+          width: 80,
+          initialSelectedDate: DateTime.now(),
+          selectionColor: primaryClr,
+          selectedTextColor: Colors.white,
+          dateTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)),
+          dayTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)),
+          monthTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)), onDateChange: (date) {
+            setState(() {
+              _selectedDate = date;
+            });
+          }),
+    );
+  }
+
+  _addTaskBar() {
+    return Container(
+        margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+        child:
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Expanded(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat.yMMMMd().format(DateTime.now()),
+                    style: subHeadingStyle,
+                  ),
+                  Text(
+                    "Today",
+                    style: headingStyle,
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(width:60,
+            child: MyButton(
+              label: " + ",
+              onTap: () async {
+                await Get.to(() => AddTaskPage());
+                _taskController.getTasks();
+              },
+            ),
+          ),
+        ]));
   }
 
   _appBar(BuildContext context) {
@@ -348,15 +306,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
       backgroundColor: context.theme.backgroundColor,
       leading: GestureDetector(
           onTap: () {
-            Get.back();
-          },
+            ThemeService().switchTheme();
+            var notifyHelper;
+            notifyHelper = NotifyHelper();
+            notifyHelper.displayNotification(
+                title: "Theme Changed",
+                body: Get.isDarkMode
+                    ? "Activated Light Theme"
+                    : "Activated Dark Theme");
 
+            //notifyHelper.scheduledNotification();
+          },
           child: Icon(
-            Icons.arrow_back_ios,
+            Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
             size: 20,
             color: Get.isDarkMode ? Colors.white : Colors.black,
           )),
-
       actions: [
         CircleAvatar(
           backgroundImage: AssetImage("images/profile.png"),
@@ -364,49 +329,5 @@ class _AddTaskPageState extends State<AddTaskPage> {
         SizedBox(width: 20),
       ],
     );
-  }
-
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015),
-        lastDate: DateTime(2121));
-
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-        print(_selectedDate);
-      });
-    } else {
-      print("It's null or something is wrong.");
-    }
-  }
-
-  _showTimePicker() {
-    return showTimePicker(
-        initialEntryMode: TimePickerEntryMode.input,
-        context: context,
-        initialTime: TimeOfDay(
-          hour: int.parse(_Time.split(":")[0]),
-          minute: int.parse(_Time.split(":")[1].split(" ")[0]),
-        )
-    );
-  }
-
-  _getTimeFromUser({required bool isStartTime}) async {
-    var pickedTime = await _showTimePicker();
-    String _formattedTime = pickedTime.format(context);
-    if (pickedTime == null) {
-      print("Time cancelled.");
-    } else if (isStartTime == true) {
-      setState(() {
-        _Time = _formattedTime;
-      });
-    } else if (isStartTime == false) {
-      setState(() {
-        // _endTime = _formattedTime;
-      });
-    }
   }
 }
