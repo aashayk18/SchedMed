@@ -52,6 +52,19 @@ class NotifyHelper {
         task.title,
         task.note,
         _convertTime(hour, minutes),
+      
+      //testing code for remind early functionality
+      
+      //     if(_selectedRemind == 5) {
+    //   tz.TZDateTime scheduleDate.subtract(const Duration(minutes: 5))
+    // } else if (_selectedRemind == 10) {
+    // tz.TZDateTime scheduleDate.subtract(const Duration(minutes: 10))
+    // } else if (_selectedRemind == 15) {
+    // tz.TZDateTime scheduleDate.subtract(const Duration(minutes: 15))
+    // } else if (_selectedRemind == 20) {
+    // tz.TZDateTime scheduleDate.subtract(const Duration(minutes: 20))
+    // }
+      
         const NotificationDetails(
             android: AndroidNotificationDetails(
                 'your channel id', 'your channel name')),
