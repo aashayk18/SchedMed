@@ -113,6 +113,55 @@ class HomePageState extends State<HomePage> {
                                   child: TaskTile(task))
                             ]))));
               }
+              
+              //testing code for weekly repeat setting
+              
+              // if (task.repeat == 'Weekly') {
+              //     DateTime date = DateFormat.jm().parse(task.startTime.toString());
+              //     var myTime = DateFormat("HH:mm").format(date);
+              //     notifyHelper.scheduledNotification(
+              //         int.parse(myTime.toString().split(":")[0]),
+              //         int.parse(myTime.toString().split(":")[1]),
+              //         task
+              //     );
+              //     return AnimationConfiguration.staggeredList(
+              //         position: index,
+              //         child: SlideAnimation(
+              //             child: FadeInAnimation(
+              //                 child: Row(children: [
+              //                   GestureDetector(
+              //                       onTap: () {
+              //                         _showBottomSheet(context, task);
+              //                       },
+              //                       child: TaskTile(task))
+              //                 ]))));
+              //
+              // }
+              
+              //testing code for monthly repeat setting
+              
+              // if (task.repeat == 'Monthly') {
+              //   DateTime date = DateFormat.jm().parse(task.startTime.toString());
+              //   var myTime = DateFormat("HH:mm").format(date);
+              //   notifyHelper.scheduledNotification(
+              //       int.parse(myTime.toString().split(":")[0]),
+              //       int.parse(myTime.toString().split(":")[1]),
+              //       task
+              //   );
+              //   return AnimationConfiguration.staggeredList(
+              //       position: index,
+              //       child: SlideAnimation(
+              //           child: FadeInAnimation(
+              //               child: Row(children: [
+              //                 GestureDetector(
+              //                     onTap: () {
+              //                       _showBottomSheet(context, task);
+              //                     },
+              //                     child: TaskTile(task))
+              //               ]))));
+              //
+              // }
+              
               if (task.date == DateFormat.yMd().format(_selectedDate)) {
                 DateTime date = DateFormat.jm().parse(task.startTime.toString());
                 var myTime = DateFormat("HH:mm").format(date);
