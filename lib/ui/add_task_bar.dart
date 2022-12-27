@@ -27,9 +27,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   DateTime _selectedDate = DateTime.now();
 
   String _Time = DateFormat("hh:mm a").format(DateTime.now())..toString();
-  int _selectedRemind = 5;
+  int _selectedRemind = 0;
   List<int> remindList = [
-    5, 10, 15, 20
+    0, 5, 10, 15, 20
   ];
   String _selectedTypeOfMedicine = "" ;
   List<String> TypeOfMedicineList = [
