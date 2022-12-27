@@ -73,7 +73,7 @@ class TaskTile extends StatelessWidget {
             width: 0.5,
             color: Colors.grey[200]!.withOpacity(0.7),
           ),
-          RotatedBox(
+         /* RotatedBox(
             quarterTurns: 3,
             child: Text(
               task!.isCompleted == 1 ? "COMPLETED" : "TODO",
@@ -84,7 +84,7 @@ class TaskTile extends StatelessWidget {
                     color: Colors.white),
               ),
             ),
-          ),
+          ),*/
         ]),
       ),
     );
