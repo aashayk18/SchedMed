@@ -158,11 +158,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
                             ),
                             SizedBox(width:90),
                             Expanded(
-                                child:MyButton(label: "After Lunch",
+                                child:AfterButton(label: "After Lunch",
                                     onTap: ()=>_validateData())
                             ),
                             SizedBox(width:10),
-                            Expanded(child: MyButton(label: "After Dinner", onTap: ()=>_validateData())
+                            Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData())
                             ),
 
 
@@ -262,7 +262,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             _colorPalette(),
-                            MyButton(label: "Add Reminder", onTap: ()=>_validateData())
+                            ThemeButton(label: "Add Reminder", onTap: ()=>_validateData())
                           ]
                       )
                     ]))));
