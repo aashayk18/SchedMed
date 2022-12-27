@@ -41,35 +41,37 @@ class HomePageState extends State<HomePage> {
       backgroundColor: context.theme.backgroundColor,
 
       // adding the bottom navigation bar
-      bottomNavigationBar: SizedBox(
-        height: 65,
-        child: BottomNavigationBar(
-          backgroundColor: Color(0xFFD3D3D3),
-          items: const [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_filled,
-                  size: 35,
-                  color: primaryClr,
-                ),
-                label: ''),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.local_hospital_rounded,
-                  size: 35,
-                  color: primaryClr,
-                ),
-                label: ''),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person_rounded,
-                  size: 35,
-                  color: primaryClr,
-                ),
-                label: ''),
-          ],
-        ),
-      ),
+      
+      //commented out the bottom navigation bar
+//       bottomNavigationBar: SizedBox(
+//         height: 65,
+//         child: BottomNavigationBar(
+//           backgroundColor: Color(0xFFD3D3D3),
+//           items: const [
+//             BottomNavigationBarItem(
+//                 icon: Icon(
+//                   Icons.home_filled,
+//                   size: 35,
+//                   color: primaryClr,
+//                 ),
+//                 label: ''),
+//             BottomNavigationBarItem(
+//                 icon: Icon(
+//                   Icons.local_hospital_rounded,
+//                   size: 35,
+//                   color: primaryClr,
+//                 ),
+//                 label: ''),
+//             BottomNavigationBarItem(
+//                 icon: Icon(
+//                   Icons.person_rounded,
+//                   size: 35,
+//                   color: primaryClr,
+//                 ),
+//                 label: ''),
+//           ],
+//         ),
+//       ),
 
       body: Column(
         children: [
@@ -162,14 +164,47 @@ class HomePageState extends State<HomePage> {
               //
               // }
               
-              if (task.date == DateFormat.yMd().format(_selectedDate)) {
-                DateTime date = DateFormat.jm().parse(task.startTime.toString());
-                var myTime = DateFormat("HH:mm").format(date);
+//               if (task.date == DateFormat.yMd().format(_selectedDate)) {
+//                 DateTime date = DateFormat.jm().parse(task.startTime.toString());
+//                 var myTime = DateFormat("HH:mm").format(date);
+//                 notifyHelper.scheduledNotification(
+//                     int.parse(myTime.toString().split(":")[0]),
+//                     int.parse(myTime.toString().split(":")[1]),
+//                     task
+//                 );
+                           
+              //setting time wiith the 'remind early' functionality
+              
+              if (task.date == DateFormat.yMd().format(_selectedDate) &&
+                  (task.remind == 0 ||
+                      task.remind == 5 ||
+                      task.remind == 10 ||
+                      task.remind == 15 ||
+                      task.remind == 20)
+              ) {
+                DateTime date =
+                // ignore: unnecessary_new
+                new DateFormat.jm().parse(task.startTime.toString());
+                var reminddate = date.subtract(task.remind == 5
+                    ? const Duration(days: 0, hours: 0, minutes: 5, seconds: 0)
+                    : task.remind == 10
+                    ? const Duration(
+                    days: 0, hours: 0, minutes: 10, seconds: 0)
+                    : task.remind == 15
+                    ? const Duration(
+                    days: 0, hours: 0, minutes: 15, seconds: 0)
+                    : task.remind == 20
+                    ? const Duration(
+                    days: 0, hours: 0, minutes: 20, seconds: 0)
+                    :const Duration(
+                    days: 0, hours: 0, minutes: 00, seconds: 0));
+                var myTime = DateFormat('HH:mm').format(reminddate);
+                print(myTime);
                 notifyHelper.scheduledNotification(
                     int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
-                    task
-                );
+                    task);
+              
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
