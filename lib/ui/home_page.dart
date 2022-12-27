@@ -211,7 +211,7 @@ class HomePageState extends State<HomePage> {
                     borderRadius: BorderRadius.circular(10),
                     color:
                     Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
-            Spacer(),
+       /*     Spacer(),
             task.isCompleted == 1
                 ? Container()
                 : _bottomSheetButton(
@@ -222,7 +222,7 @@ class HomePageState extends State<HomePage> {
               },
               clr: primaryClr,
               context: context,
-            ),
+            ),*/
             _bottomSheetButton(
               label: "Delete Task",
               onTap: () {
