@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_to_do_app/controllers/date_controller.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
 import 'package:flutter_to_do_app/ui/widgets/button.dart';
 import 'package:flutter_to_do_app/ui/widgets/input_field.dart';
@@ -47,6 +48,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
   int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
+    final dateSynchController =
+     Get.put(DateSynchController()); // we added a part
+    _selectedDate = dateSynchController.dateTime; 
     return Scaffold(
         backgroundColor: context.theme.backgroundColor,
         appBar: _appBar(context),
@@ -162,10 +166,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                             SizedBox(width:90),
                             Expanded(
                                 child:AfterButton(label: "After Lunch",
-                                    onTap: ()=>_validateData())
+                                    onTap: ()=>_validateData(dateSynchController.dateTime))
                             ),
                             SizedBox(width:10),
-                            Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData())
+                            Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData(dateSynchController.dateTime))
                             ),
 
 
@@ -265,15 +269,18 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             _colorPalette(),
-                            ThemeButton(label: "Add Reminder", onTap: ()=>_validateData())
+                            MyButton(label: "Add Reminder", onTap: (){  
+                              //print("looool");
+                              print(dateSynchController.dateTime);
+                              _validateData(dateSynchController.dateTime);})
                           ]
                       )
                     ]))));
   }
 
-  _validateData() {
+  _validateData(DateTime dateTime) {
     if(_titleController.text.isNotEmpty&&_noteController.text.isNotEmpty){
-      _addTaskToDb();
+      _addTaskToDb(dateTime);
       Get.back();
     } else if(_titleController.text.isEmpty||_noteController.text.isEmpty){
       Get.snackbar("Required", "All fields are required!",
@@ -287,12 +294,12 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-  _addTaskToDb() async {
+  _addTaskToDb(DateTime dateTime) async {
     int value = await _taskController.addTask(
         task: Task (
           note: _noteController.text,
           title: _titleController.text,
-          date: DateFormat.yMd().format(_selectedDate),
+          date: DateFormat.yMd().format(dateTime),
 
           startTime: _Time,
 
