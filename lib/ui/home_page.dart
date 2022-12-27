@@ -1,6 +1,7 @@
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_to_do_app/controllers/date_controller.dart';
 import 'package:flutter_to_do_app/services/notification_services.dart';
 import 'package:flutter_to_do_app/services/theme_services.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
@@ -36,6 +37,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final dateSynchController = Get.put(DateSynchController());
     return Scaffold(
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
@@ -320,6 +322,7 @@ class HomePageState extends State<HomePage> {
   }
 
   _addDateBar() {
+     final dateSynchController = Get.put(DateSynchController());
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 20, right: 10),
       child: DatePicker(DateTime.now(),
@@ -343,6 +346,8 @@ class HomePageState extends State<HomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
+        dateSynchController.setDateTime(date);
+        print(date.toString());
             setState(() {
               _selectedDate = date;
             });
