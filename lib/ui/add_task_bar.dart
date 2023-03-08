@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_to_do_app/ui/widgets/button2.dart';
 import 'package:flutter_to_do_app/ui/widgets/button3.dart';
 import 'package:flutter_to_do_app/ui/widgets/button4.dart';
-
+import 'package:flutter_to_do_app/ui/widgets/button7.dart';
+import  '../controllers/button4_controller.dart';
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
 
@@ -25,6 +26,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TextEditingController _noteController = TextEditingController();
   final TextEditingController _DosageController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  final Button5Controller _buttonControlller = Get.put(Button5Controller());
 
   String _Time = DateFormat("hh:mm a").format(DateTime.now())..toString();
   int _selectedRemind = 0;
