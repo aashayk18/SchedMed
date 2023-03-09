@@ -9,6 +9,7 @@ import 'package:flutter_to_do_app/ui/widgets/task_tile.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_to_do_app/controllers/date_controller.dart';
 
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
@@ -83,8 +84,6 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 
   _showTasks() {
     return Expanded(
@@ -236,7 +235,7 @@ class HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(top: 4),
           height: task.isCompleted == 1
               ? MediaQuery.of(context).size.height * 0.24
-              : MediaQuery.of(context).size.height * 0.32,
+              : MediaQuery.of(context).size.height * 0.24,
           color: Get.isDarkMode ? darkGreyClr : Colors.white,
           child: Column(children: [
             Container(
@@ -259,7 +258,7 @@ class HomePageState extends State<HomePage> {
               context: context,
             ),*/
             _bottomSheetButton(
-              label: "Delete Task",
+              label: "Delete Reminder",
               onTap: () {
                 _taskController.delete(task);
                 Get.back();
@@ -320,6 +319,7 @@ class HomePageState extends State<HomePage> {
   }
 
   _addDateBar() {
+    final dateSynchController = Get.put(DateSynchController());
     return Container(
       margin: const EdgeInsets.only(top: 20, left: 20, right: 10),
       child: DatePicker(DateTime.now(),
@@ -343,9 +343,11 @@ class HomePageState extends State<HomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
-            setState(() {
-              _selectedDate = date;
-            });
+            dateSynchController.setDateTime(date);
+            print(date.toString());
+            // setState(() {
+            //   _selectedDate = date;
+            // });
           }),
     );
   }
