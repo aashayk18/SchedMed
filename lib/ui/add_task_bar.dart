@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
-import 'package:flutter_to_do_app/ui/widgets/button.dart';
 import 'package:flutter_to_do_app/ui/widgets/input_field.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_to_do_app/ui/widgets/button2.dart';
-import 'package:flutter_to_do_app/ui/widgets/button3.dart';
-import 'package:flutter_to_do_app/ui/widgets/button4.dart';
+import 'package:flutter_to_do_app/ui/widgets/button7.dart';
+import 'package:flutter_to_do_app/controllers/button4_controller.dart';
+import 'package:flutter_to_do_app/controllers/date_controller.dart';
 
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
@@ -23,23 +23,33 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TaskController _taskController = Get.put(TaskController());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _DosageController = TextEditingController();
+  // final TextEditingController _DosageController = TextEditingController();
+  // final TextEditingController _TypeController = TextEditingController();
+
   DateTime _selectedDate = DateTime.now();
+
+  // final Button5Controller _buttonControlller = Get.put(Button5Controller());
 
   String _Time = DateFormat("hh:mm a").format(DateTime.now())..toString();
   int _selectedRemind = 0;
   List<int> remindList = [
     0, 5, 10, 15, 20
   ];
-  String _selectedTypeOfMedicine = "" ;
+  String _selectedTypeOfMedicine = "Tab" ;
   List<String> TypeOfMedicineList = [
-    "Tablet", "Syrup", "Powder", "Drop(s)", "Cream", "Ointment", "Syringe"
+    "Tab", "Syr", "Pdr", "Drp(s)", "Crm", "Ung", "Inj"
   ];
 
   String _selectedQuantity = "tb";
   List<String> QuantityList = [
     "tb", "ml", "mg", "N/A"
   ];
+
+  String _SelectedSchedule = "After lunch";
+  List<String> ScheduleList = [
+    "After lunch ", "Before breakfast", "After dinner", "Before lunch","After breakfast ","Before dinner"
+  ];
+
   String _selectedRepeat = "None";
   List<String> repeatList = [
     "None", "Daily", "Weekly", "Monthly"
@@ -47,6 +57,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
+    final dateSynchController = Get.put(DateSynchController()); // we added a part
+    _selectedDate = dateSynchController.dateTime;
     return Scaffold(
         backgroundColor: context.theme.backgroundColor,
         appBar: _appBar(context),
@@ -65,11 +77,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       ),
                       MyInputField(title: "Medicine Name ", hint: "Enter medicine name", controller: _titleController),
                       SizedBox(height:0),
-                      MyInputField(title: "Instructions", hint: "Enter consumption instructions", controller: _noteController),
+                      MyInputField(title: "Dosage", hint: "Enter medicine dosage", controller: _noteController),
                       Row(children:[
                         Expanded(
                             child:MyInputField(title: "Type", hint: "$_selectedTypeOfMedicine",
-
+                            // controller: _TypeController,
                                 widget: DropdownButton(
                                   icon: Icon(Icons.keyboard_arrow_down,
                                       color: Colors.grey
@@ -94,9 +106,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
                                 )
                             )),
                         SizedBox(width:10),
-                        Expanded(
-                          child: MyInputField(title: "Dosage", hint: "", controller: _DosageController),
-                        ),
+                        // Expanded(
+                        //   child: MyInputField(title: "Dosage", hint: "", controller: _DosageController),
+                        // ),
                         SizedBox(width:10) ,
                         Expanded(child:MyInputField(title: " ", hint: "$_selectedQuantity",
 
@@ -137,36 +149,65 @@ class _AddTaskPageState extends State<AddTaskPage> {
                             textAlign: TextAlign.left,
                           ),
 
-                          SizedBox(width:18),
+                          SizedBox(width:36),
 
-                          const Text(
-                            "Schedule",
-                            style: TextStyle(fontSize: 18),
-                            textAlign: TextAlign.right,
+                          SizedBox(height: 18),
+
+                          Expanded (
+                              child:MyInputField(title: "Schedule", hint: "$_SelectedSchedule",
+
+                                  widget: DropdownButton(
+                                    icon: Icon(Icons.keyboard_arrow_down,
+                                        color: Colors.grey
+                                    ),
+                                    iconSize: 32,
+                                    elevation: 4,
+                                    style: subTitleStyle,
+                                    underline:Container(height:0,),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _SelectedSchedule = newValue!;
+                                      });
+                                    },
+                                    items:ScheduleList.map<DropdownMenuItem<String>>((String? value){
+                                      return DropdownMenuItem<String>(
+                                          value: value,
+                                          child:Text(value!, style:TextStyle(color:Colors.grey))
+                                      );
+                                    }
+                                    ).toList(),
+
+                                  )
+                              )
                           ),
-                          SizedBox(width:10),
-
-                          Icon(Icons.add),
+                          // const Text(
+                          //   "Schedule",
+                          //   style: TextStyle(fontSize: 18),
+                          //   textAlign: TextAlign.right,
+                          // ),
+                          // SizedBox(width:10),
+                          //
+                          // Icon(Icons.add),
                         ],
                       ),
 
-                      SizedBox(height: 14),
+                      // SizedBox(height: 14),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(
                               width: 60,
-                              child: MyButton(label: "+", onTap: () {}),
+                              child: CameraButton(),
                             ),
                             SizedBox(width:90),
-                            Expanded(
-                                child:AfterButton(label: "After Lunch",
-                                    onTap: ()=>_validateData())
-                            ),
-                            SizedBox(width:10),
-                            Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData())
-                            ),
+                            // Expanded(
+                            //     child:AfterButton(label: "After Lunch",
+                            //         onTap: ()=>_validateData())
+                            // ),
+                            // SizedBox(width:10),
+                            // Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData())
+                            // ),
 
 
                           ]),
@@ -265,15 +306,17 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             _colorPalette(),
-                            ThemeButton(label: "Add Reminder", onTap: ()=>_validateData())
+                            ThemeButton(label: "Add Reminder", onTap: (){
+                              print(dateSynchController.dateTime);
+                              _validateData(dateSynchController.dateTime);})
                           ]
                       )
                     ]))));
   }
 
-  _validateData() {
+  _validateData(DateTime dateTime) {
     if(_titleController.text.isNotEmpty&&_noteController.text.isNotEmpty){
-      _addTaskToDb();
+      _addTaskToDb(dateTime);
       Get.back();
     } else if(_titleController.text.isEmpty||_noteController.text.isEmpty){
       Get.snackbar("Required", "All fields are required!",
@@ -287,19 +330,19 @@ class _AddTaskPageState extends State<AddTaskPage> {
     }
   }
 
-  _addTaskToDb() async {
+  _addTaskToDb(DateTime dateTime) async {
     int value = await _taskController.addTask(
-        task: Task (
+        task: Task(
           note: _noteController.text,
           title: _titleController.text,
-          date: DateFormat.yMd().format(_selectedDate),
-
+          date: DateFormat.yMd().format(dateTime),
           startTime: _Time,
-
           remind: _selectedRemind,
           repeat: _selectedRepeat,
           color: _selectedColor,
           isCompleted: 0,
+          // Dosage: (_DosageController.text).toString(),
+          // Type: _TypeController.text,
         )
     );
     print("My id is " "$value");
@@ -369,22 +412,22 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
-  _getDateFromUser() async {
-    DateTime? _pickerDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015),
-        lastDate: DateTime(2121));
-
-    if (_pickerDate != null) {
-      setState(() {
-        _selectedDate = _pickerDate;
-        print(_selectedDate);
-      });
-    } else {
-      print("It's null or something is wrong.");
-    }
-  }
+  // _getDateFromUser() async {
+  //   DateTime? pickerDate = await showDatePicker(
+  //       context: context,
+  //       initialDate: DateTime.now(),
+  //       firstDate: DateTime(2015),
+  //       lastDate: DateTime(2121));
+  //
+  //   if (pickerDate != null) {
+  //     setState(() {
+  //       _selectedDate = pickerDate;
+  //       print(_selectedDate);
+  //     });
+  //   } else {
+  //     print("It's null or something is wrong.");
+  //   }
+  // }
 
   _showTimePicker() {
     return showTimePicker(
