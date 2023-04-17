@@ -37,6 +37,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final dateSynchController = Get.put(DateSynchController());
     return Scaffold(
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
@@ -345,9 +346,9 @@ class HomePageState extends State<HomePage> {
                   color: Colors.grey)), onDateChange: (date) {
             dateSynchController.setDateTime(date);
             print(date.toString());
-            // setState(() {
-            //   _selectedDate = date;
-            // });
+            setState(() {
+              _selectedDate = date;
+            });
           }),
     );
   }
