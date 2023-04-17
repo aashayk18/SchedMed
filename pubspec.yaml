@@ -46,6 +46,7 @@ dependencies:
   flutter_native_timezone:
   sqflite:
   flutter_staggered_animations:
+  image_picker:^0.8.4+4
 dev_dependencies:
   flutter_test:
     sdk: flutter
