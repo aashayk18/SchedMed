@@ -85,7 +85,7 @@ class NotifiedPage extends StatelessWidget {
                       ),
                       SizedBox(
                         width: 120,
-                        child: CompleteButton(label: "Completed", onTap: () {}),
+                        child: CompleteButton(label: "Completed", onTap:() => Get.back() ),
                       ),
                       SizedBox(
                           height: 20
@@ -95,7 +95,7 @@ class NotifiedPage extends StatelessWidget {
                       ),
                       SizedBox (
                         width: 120,
-                        child: IgnoreButton(label: "Ignore", onTap: () {}),
+                        child: IgnoreButton(label: "Ignore", onTap:() => Get.back() ),
                       )
                     ],
                   ),
