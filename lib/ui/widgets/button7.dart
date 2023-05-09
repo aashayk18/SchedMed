@@ -10,13 +10,13 @@ import 'package:image_picker/image_picker.dart';
 import '../theme.dart';
 
 
-class Button extends StatelessWidget {
+class CameraButton extends StatelessWidget {
   File? pickedFile;
   final ImagePicker imagePicker = ImagePicker();
   final Button5Controller _buttonController = Get.put(Button5Controller());
  // final Button5Controller _buttonController = Get.find();
 
-  Button({
+  CameraButton({
     Key? key,
   }) : super(key: key);
 
