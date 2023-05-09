@@ -8,6 +8,9 @@ import 'package:flutter_to_do_app/ui/widgets/button2.dart';
 import 'package:flutter_to_do_app/ui/widgets/button7.dart';
 import 'package:flutter_to_do_app/controllers/button4_controller.dart';
 import 'package:flutter_to_do_app/controllers/date_controller.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
@@ -20,6 +23,40 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
+
+  @override
+  void initState() {
+    initRecorder();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    recorder.closeRecorder();
+    super.dispose();
+  }
+
+  final recorder = FlutterSoundRecorder();
+
+  Future initRecorder() async {
+    final status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw 'Permission not granted';
+    }
+    await recorder.openRecorder();
+    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+  }
+
+  Future startRecord() async {
+    await recorder.startRecorder(toFile: "audio");
+  }
+
+  Future stopRecorder() async {
+    final filePath = await recorder.stopRecorder();
+    final file = File(filePath!);
+    print('Recorded file path: $filePath');
+  }
+
   final TaskController _taskController = Get.put(TaskController());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
@@ -77,7 +114,21 @@ class _AddTaskPageState extends State<AddTaskPage> {
                       ),
                       MyInputField(title: "Medicine Name ", hint: "Enter medicine name", controller: _titleController),
                       SizedBox(height:0),
-                      MyInputField(title: "Dosage", hint: "Enter medicine dosage", controller: _noteController),
+                      MyInputField(title: "Dosage", hint: "Enter medicine dosage",
+                          controller: _noteController,
+                          widget: IconButton(
+                              onPressed: () async {
+                                if (recorder.isRecording) {
+                                  await stopRecorder();
+                                  setState(() {});
+                                } else {
+                                  await startRecord();
+                                  setState(() {});
+                                }
+                              },
+                              icon: Icon(
+                                  recorder.isRecording ? Icons.stop : Icons.mic,
+                                  color: Colors.grey))),
                       Row(children:[
                         Expanded(
                             child:MyInputField(title: "Type", hint: "$_selectedTypeOfMedicine",
