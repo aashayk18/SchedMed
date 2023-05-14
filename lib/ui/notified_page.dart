@@ -6,7 +6,7 @@ import 'package:flutter_to_do_app/ui/widgets/button5.dart';
 import 'package:flutter_to_do_app/ui/widgets/button6.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:flutter_sms/flutter_sms.dart';
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
 
@@ -95,7 +95,9 @@ class NotifiedPage extends StatelessWidget {
                       ),
                       SizedBox (
                         width: 120,
-                        child: IgnoreButton(label: "Ignore", onTap:() => Get.back() ),
+                        child: IgnoreButton(label: "Ignore", onTap:() =>
+                            _sendSMS("This is a test message!", ["1234567890", "5556787676"])
+                        ),
                       )
                     ],
                   ),
@@ -104,6 +106,14 @@ class NotifiedPage extends StatelessWidget {
             )),
           ),
         ));
+  }
+
+  _sendSMS(String message, List<String> recipients) async {
+    String _result = await _sendSMS(message, recipients)
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
   }
 
   _showBottomSheet(BuildContext context, Task task) {

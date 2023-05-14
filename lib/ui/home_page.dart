@@ -27,12 +27,15 @@ class HomePageState extends State<HomePage> {
   final _taskController = Get.put(TaskController());
   var notifyHelper;
 
+  // List<Reference> references;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     notifyHelper = NotifyHelper();
     notifyHelper.initializeNotification();
+    // _onUploadComplete();
   }
 
   @override
@@ -85,6 +88,15 @@ class HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  // Future<void> _onUploadComplete() async {
+  //   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  //   ListResult listResult =
+  //       await firebaseStorage.ref().child('upload-voice-firebase').list();
+  //   setState(() {
+  //     references = listResult.items;
+  //   });
+  // }
 
   _showTasks() {
     return Expanded(

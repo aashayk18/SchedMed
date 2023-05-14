@@ -46,7 +46,18 @@ dependencies:
   flutter_native_timezone:
   sqflite:
   flutter_staggered_animations:
-  image_picker:^0.8.4+4
+  flutter_sound: ^9.2.13
+
+  permission_handler: ^9.2.0
+  image_picker: ^0.8.4+4
+  cloud_firestore:
+  firebase_auth: ^4.2.10
+  firebase_core: ^2.7.1
+  firebase_storage:
+#  flutter_audio_recorder:
+  path_provider:
+  flutter_sms: ^2.3.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
