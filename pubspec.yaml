@@ -47,20 +47,29 @@ dependencies:
   sqflite:
   flutter_staggered_animations:
   flutter_sound: ^9.2.13
-
+  telephony: ^0.2.0
   permission_handler: ^9.2.0
   image_picker: ^0.8.4+4
   cloud_firestore:
   firebase_auth: ^4.2.10
   firebase_core: ^2.7.1
+  google_sign_in:
   firebase_storage:
 #  flutter_audio_recorder:
   path_provider:
   flutter_sms: ^2.3.3
+  just_audio: ^0.9.33
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

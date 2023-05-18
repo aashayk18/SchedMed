@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_to_do_app/services/theme_services.dart';
+import 'package:flutter_to_do_app/splash_screen.dart';
 import 'package:flutter_to_do_app/ui/home_page.dart';
 import 'package:flutter_to_do_app/ui/login_page.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
@@ -29,6 +30,6 @@ class MyApp extends StatelessWidget {
         theme: Themes.light,
         darkTheme: Themes.dark,
         themeMode: ThemeService().theme,
-        home: const LoginPage());
+        home: SplashScreen());
   }
 }

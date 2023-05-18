@@ -6,14 +6,15 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_to_do_app/ui/widgets/button2.dart';
 import 'package:flutter_to_do_app/ui/widgets/button7.dart';
-import 'package:flutter_to_do_app/controllers/button4_controller.dart';
 import 'package:flutter_to_do_app/controllers/date_controller.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as path;
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
+import 'package:flutter_to_do_app/services/constants.dart';
 
 class AddTaskPage extends StatefulWidget {
   const AddTaskPage({Key? key}) : super(key: key);
@@ -23,7 +24,6 @@ class AddTaskPage extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskPage> {
-
   @override
   void initState() {
     initRecorder();
@@ -60,41 +60,34 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TaskController _taskController = Get.put(TaskController());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
-  // final TextEditingController _DosageController = TextEditingController();
-  // final TextEditingController _TypeController = TextEditingController();
+  final firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
 
   DateTime _selectedDate = DateTime.now();
 
-  // final Button5Controller _buttonControlller = Get.put(Button5Controller());
-
   String _Time = DateFormat("hh:mm a").format(DateTime.now())..toString();
   int _selectedRemind = 0;
-  List<int> remindList = [
-    0, 5, 10, 15, 20
-  ];
-  String _selectedTypeOfMedicine = "Tab" ;
+  List<int> remindList = [0, 5, 10, 15, 20];
+  String _selectedTypeOfMedicine = "Tab";
   List<String> TypeOfMedicineList = [
-    "Tab", "Syr", "Pdr", "Drp(s)", "Crm", "Ung", "Inj"
+    "Tab",
+    "Syr",
+    "Pdr",
+    "Drp(s)",
+    "Crm",
+    "Ung",
+    "Inj"
   ];
 
   String _selectedQuantity = "tb";
-  List<String> QuantityList = [
-    "tb", "ml", "mg", "N/A"
-  ];
-
-  String _SelectedSchedule = "After lunch";
-  List<String> ScheduleList = [
-    "After lunch ", "Before breakfast", "After dinner", "Before lunch","After breakfast ","Before dinner"
-  ];
+  List<String> QuantityList = ["tb", "ml", "mg", "N/A"];
 
   String _selectedRepeat = "None";
-  List<String> repeatList = [
-    "None", "Daily", "Weekly", "Monthly"
-  ];
+  List<String> repeatList = ["None", "Daily"];
   int _selectedColor = 0;
   @override
   Widget build(BuildContext context) {
-    final dateSynchController = Get.put(DateSynchController()); // we added a part
+    final dateSynchController =
+    Get.put(DateSynchController()); // we added a part
     _selectedDate = dateSynchController.dateTime;
     return Scaffold(
         backgroundColor: context.theme.backgroundColor,
@@ -102,7 +95,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
         body: Container(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: SingleChildScrollView(
-
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -110,15 +102,20 @@ class _AddTaskPageState extends State<AddTaskPage> {
                         "New Reminder",
                         style: headingStyle,
                         textAlign: TextAlign.left,
-
                       ),
-                      MyInputField(title: "Medicine Name ", hint: "Enter medicine name", controller: _titleController),
-                      SizedBox(height:0),
-                      MyInputField(title: "Dosage", hint: "Enter medicine dosage",
-                          controller: _noteController,
-                          ),
-                      MyInputField(title: "Instructions", hint: "Record instructions",
-                          controller: _noteController,
+                      MyInputField(
+                          title: "Medicine Name ",
+                          hint: "Enter medicine name",
+                          controller: _titleController),
+                      SizedBox(height: 0),
+                      MyInputField(
+                        title: "Dosage",
+                        hint: "Enter medicine dosage",
+                        controller: _noteController,
+                      ),
+                      MyInputField(
+                          title: "Instructions",
+                          hint: "Record instructions",
                           widget: IconButton(
                               onPressed: () async {
                                 if (recorder.isRecording) {
@@ -132,65 +129,65 @@ class _AddTaskPageState extends State<AddTaskPage> {
                               icon: Icon(
                                   recorder.isRecording ? Icons.stop : Icons.mic,
                                   color: Colors.grey))),
-                      Row(children:[
+                      Row(children: [
                         Expanded(
-                            child:MyInputField(title: "Type", hint: "$_selectedTypeOfMedicine",
-                            // controller: _TypeController,
+                            child: MyInputField(
+                                title: "Type",
+                                hint: "$_selectedTypeOfMedicine",
+                                // controller: _TypeController,
                                 widget: DropdownButton(
                                   icon: Icon(Icons.keyboard_arrow_down,
-                                      color: Colors.grey
-                                  ),
+                                      color: Colors.grey),
                                   iconSize: 32,
                                   elevation: 4,
                                   style: subTitleStyle,
-                                  underline:Container(height:0,),
+                                  underline: Container(
+                                    height: 0,
+                                  ),
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       _selectedTypeOfMedicine = newValue!;
                                     });
                                   },
-                                  items:TypeOfMedicineList.map<DropdownMenuItem<String>>((String? value){
+                                  items: TypeOfMedicineList.map<
+                                      DropdownMenuItem<String>>((String? value) {
                                     return DropdownMenuItem<String>(
                                         value: value,
-                                        child:Text(value!, style:TextStyle(color:Colors.grey))
-                                    );
-                                  }
-                                  ).toList(),
-
-                                )
-                            )),
-                        SizedBox(width:10),
+                                        child: Text(value!,
+                                            style: TextStyle(color: Colors.grey)));
+                                  }).toList(),
+                                ))),
+                        SizedBox(width: 10),
                         // Expanded(
                         //   child: MyInputField(title: "Dosage", hint: "", controller: _DosageController),
                         // ),
-                        SizedBox(width:10) ,
-                        Expanded(child:MyInputField(title: " ", hint: "$_selectedQuantity",
-
-                            widget: DropdownButton(
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.grey
-
-                              ),
-                              iconSize: 32,
-                              elevation: 4,
-                              style: subTitleStyle,
-                              underline:Container(height:0,),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedQuantity = newValue!;
-                                });
-                              },
-                              items:QuantityList.map<DropdownMenuItem<String>>((String? value){
-                                return DropdownMenuItem<String>(
-                                    value: value,
-                                    child:Text(value!, style:TextStyle(color:Colors.grey))
-                                );
-                              }
-                              ).toList(),
-
-                            ))),
-
-
+                        SizedBox(width: 10),
+                        Expanded(
+                            child: MyInputField(
+                                title: " ",
+                                hint: "$_selectedQuantity",
+                                widget: DropdownButton(
+                                  icon: Icon(Icons.keyboard_arrow_down,
+                                      color: Colors.grey),
+                                  iconSize: 32,
+                                  elevation: 4,
+                                  style: subTitleStyle,
+                                  underline: Container(
+                                    height: 0,
+                                  ),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _selectedQuantity = newValue!;
+                                    });
+                                  },
+                                  items: QuantityList.map<DropdownMenuItem<String>>(
+                                          (String? value) {
+                                        return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value!,
+                                                style: TextStyle(color: Colors.grey)));
+                                      }).toList(),
+                                ))),
                       ]),
 
                       SizedBox(height: 10),
@@ -203,45 +200,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                             textAlign: TextAlign.left,
                           ),
 
-                          SizedBox(width:36),
-
-                          SizedBox(height: 18),
-
-                          Expanded (
-                              child:MyInputField(title: "Schedule", hint: "$_SelectedSchedule",
-
-                                  widget: DropdownButton(
-                                    icon: Icon(Icons.keyboard_arrow_down,
-                                        color: Colors.grey
-                                    ),
-                                    iconSize: 32,
-                                    elevation: 4,
-                                    style: subTitleStyle,
-                                    underline:Container(height:0,),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        _SelectedSchedule = newValue!;
-                                      });
-                                    },
-                                    items:ScheduleList.map<DropdownMenuItem<String>>((String? value){
-                                      return DropdownMenuItem<String>(
-                                          value: value,
-                                          child:Text(value!, style:TextStyle(color:Colors.grey))
-                                      );
-                                    }
-                                    ).toList(),
-
-                                  )
-                              )
-                          ),
-                          // const Text(
-                          //   "Schedule",
-                          //   style: TextStyle(fontSize: 18),
-                          //   textAlign: TextAlign.right,
-                          // ),
-                          // SizedBox(width:10),
-                          //
-                          // Icon(Icons.add),
+                          SizedBox(height: 25),
                         ],
                       ),
 
@@ -254,34 +213,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
                               width: 60,
                               child: CameraButton(),
                             ),
-                            SizedBox(width:90),
-                            // Expanded(
-                            //     child:AfterButton(label: "After Lunch",
-                            //         onTap: ()=>_validateData())
-                            // ),
-                            // SizedBox(width:10),
-                            // Expanded(child: BeforeButton(label: "Before Dinner", onTap: ()=>_validateData())
-                            // ),
-
-
+                            SizedBox(width: 90),
                           ]),
 
-                      // SizedBox(height:12)   ,
-                      //
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.start,
-                      //   mainAxisSize: MainAxisSize.min,
-                      //   children: <Widget>[
-                      //     Text(
-                      //       'Time',
-                      //       style: TextStyle(
-                      //         fontSize: 17,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // )   ,
-
-                      Row(children:[
+                      Row(children: [
                         Expanded(
                             child: MyInputField(
                                 title: "Time",
@@ -294,64 +229,64 @@ class _AddTaskPageState extends State<AddTaskPage> {
                                         color: Colors.grey)))),
                       ]),
 
-
-                      SizedBox(height:0),
+                      SizedBox(height: 0),
 
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Row(children: [
                           Expanded(
-                              child:MyInputField(
-                                  title: "Remind", hint: "$_selectedRemind minutes early",
+                              child: MyInputField(
+                                  title: "Remind",
+                                  hint: "$_selectedRemind minutes early",
                                   widget: DropdownButton(
                                     icon: Icon(Icons.keyboard_arrow_down,
                                         color: Colors.grey),
                                     iconSize: 32,
                                     elevation: 4,
                                     style: subTitleStyle,
-                                    underline:Container(height:0,),
+                                    underline: Container(
+                                      height: 0,
+                                    ),
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         _selectedRemind = int.parse(newValue!);
                                       });
                                     },
-                                    items:remindList.map<DropdownMenuItem<String>>((int value){
+                                    items: remindList
+                                        .map<DropdownMenuItem<String>>((int value) {
                                       return DropdownMenuItem<String>(
                                           value: value.toString(),
-                                          child:Text(value.toString())
-                                      );
-                                    }
-                                    ).toList(),
-
-                                  )
-                              )),
-                          SizedBox(width:12),
+                                          child: Text(value.toString()));
+                                    }).toList(),
+                                  ))),
+                          SizedBox(width: 12),
                           Expanded(
-                              child: MyInputField(title: "Repeat", hint: "$_selectedRepeat",
+                              child: MyInputField(
+                                  title: "Repeat",
+                                  hint: "$_selectedRepeat",
                                   widget: DropdownButton(
                                     icon: Icon(Icons.keyboard_arrow_down,
-                                        color: Colors.grey
-
-                                    ),
+                                        color: Colors.grey),
                                     iconSize: 32,
                                     elevation: 4,
                                     style: subTitleStyle,
-                                    underline:Container(height:0,),
+                                    underline: Container(
+                                      height: 0,
+                                    ),
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         _selectedRepeat = newValue!;
                                       });
                                     },
-                                    items:repeatList.map<DropdownMenuItem<String>>((String? value){
-                                      return DropdownMenuItem<String>(
-                                          value: value,
-                                          child:Text(value!, style:TextStyle(color:Colors.grey))
-                                      );
-                                    }
-                                    ).toList(),
-
-                                  )
-                              )),
+                                    items: repeatList.map<DropdownMenuItem<String>>(
+                                            (String? value) {
+                                          return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value!,
+                                                  style:
+                                                  TextStyle(color: Colors.grey)));
+                                        }).toList(),
+                                  ))),
                         ]),
                       ),
                       SizedBox(height: 10),
@@ -360,86 +295,134 @@ class _AddTaskPageState extends State<AddTaskPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             _colorPalette(),
-                            ThemeButton(label: "Add Reminder", onTap: (){
-                              print(dateSynchController.dateTime);
-                              _validateData(dateSynchController.dateTime);})
-                          ]
-                      )
+                            ThemeButton(
+                                label: "Add Reminder",
+                                onTap: () {
+                                  print(dateSynchController.dateTime);
+                                  _validateData(dateSynchController.dateTime);
+                                })
+                          ])
                     ]))));
   }
 
   _validateData(DateTime dateTime) {
-    if(_titleController.text.isNotEmpty&&_noteController.text.isNotEmpty){
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
       _addTaskToDb(dateTime);
       Get.back();
-    } else if(_titleController.text.isEmpty||_noteController.text.isEmpty){
+    } else if (_titleController.text.isEmpty || _noteController.text.isEmpty) {
       Get.snackbar("Required", "All fields are required!",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.white,
           colorText: pinkClr,
-          icon: Icon(Icons.warning_amber_rounded,
+          icon: Icon(
+            Icons.warning_amber_rounded,
             color: Colors.red,
-          )
-      );
+          ));
     }
   }
 
   _addTaskToDb(DateTime dateTime) async {
-    int value = await _taskController.addTask(
-        task: Task(
-          note: _noteController.text,
-          title: _titleController.text,
-          date: DateFormat.yMd().format(dateTime),
-          startTime: _Time,
-          remind: _selectedRemind,
-          repeat: _selectedRepeat,
-          color: _selectedColor,
-          isCompleted: 0,
-          // Dosage: (_DosageController.text).toString(),
-          // Type: _TypeController.text,
-        )
-    );
-    print("My id is " "$value");
+    if (_titleController.text.isNotEmpty && _noteController.text.isNotEmpty) {
+      // try {
+      //   // Check if the audio is currently being recorded
+      //   if (recorder.isRecording) {
+      //     // Stop recording and get the file path
+      //     final filePath = await stopRecorder();
+      //     final file = File(filePath!);
+      //
+      //     // Generate a unique file name
+      //     final fileName = '${DateTime.now().millisecondsSinceEpoch}.m4a';
+      //
+      //     // Upload the audio file to Firebase Storage
+      //     final storageRef = firebase_storage.FirebaseStorage.instance
+      //         .ref()
+      //         .child('audio')
+      //         .child(fileName);
+      //     final uploadTask = storageRef.putFile(file);
+      //
+      //     // Wait for the upload task to complete
+      //     await uploadTask;
+      //
+      //     // Get the download URL of the uploaded file
+      //     final downloadURL = await storageRef.getDownloadURL();
+      //
+      //     audioURL = downloadURL;
+      //
+      //     // Clean up the local file
+      //     file.delete();
+
+          // Continue with saving the task to the database or any other logic
+          int value = await _taskController.addTask(
+            task: Task(
+              note: _selectedTypeOfMedicine+" "+_noteController.text+" "+_selectedQuantity,
+              title: _titleController.text,
+              date: DateFormat.yMd().format(dateTime),
+              startTime: _Time,
+              remind: _selectedRemind,
+              repeat: _selectedRepeat,
+              color: _selectedColor,
+              isCompleted: 0,
+            ),
+          );
+          print("My id is $value");
+        } else {
+          // Audio recording is not in progress
+          // print('No audio recording in progress');
+        }
+    //   } catch (e) {
+    //     // Handle any errors that occur during the upload process
+    //     print('Error uploading audio: $e');
+    //   }
+    // } else {
+    //   // Display a warning if any required fields are empty
+    //   Get.snackbar("Required", "All fields are required!",
+    //       snackPosition: SnackPosition.BOTTOM,
+    //       backgroundColor: Colors.white,
+    //       colorText: pinkClr,
+    //       icon: Icon(
+    //         Icons.warning_amber_rounded,
+    //         color: Colors.red,
+    //       ));
+    // }
   }
+
   _colorPalette() {
-
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          Text("Color",
-            style: titleStyle,
-          ),
-          SizedBox(height: 6.0),
-          Wrap(
-              children: List<Widget>.generate(
-                  3,
-                      (int index) {
-                    return GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          _selectedColor = index;
-                          print("$index");
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: index == 0?primaryClr:index==1?pinkClr:yellowClr,
-                          child: _selectedColor==index?Icon(Icons.done,
-                            color: Colors.white,
-                            size: 16,
-                          ):Container(),
-                        ),
-                      ),
-                    );
-                  }
-              )
-          )
-
-        ]
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(
+        "Color",
+        style: titleStyle,
+      ),
+      SizedBox(height: 6.0),
+      Wrap(
+          children: List<Widget>.generate(3, (int index) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedColor = index;
+                  print("$index");
+                });
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: CircleAvatar(
+                  radius: 14,
+                  backgroundColor: index == 0
+                      ? primaryClr
+                      : index == 1
+                      ? pinkClr
+                      : yellowClr,
+                  child: _selectedColor == index
+                      ? Icon(
+                    Icons.done,
+                    color: Colors.white,
+                    size: 16,
+                  )
+                      : Container(),
+                ),
+              ),
+            );
+          }))
+    ]);
   }
 
   _appBar(BuildContext context) {
@@ -450,38 +433,16 @@ class _AddTaskPageState extends State<AddTaskPage> {
           onTap: () {
             Get.back();
           },
-
           child: Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: Get.isDarkMode ? Colors.white : Colors.black,
           )),
-
       actions: [
-        CircleAvatar(
-          backgroundImage: AssetImage("images/profile.png"),
-        ),
         SizedBox(width: 20),
       ],
     );
   }
-
-  // _getDateFromUser() async {
-  //   DateTime? pickerDate = await showDatePicker(
-  //       context: context,
-  //       initialDate: DateTime.now(),
-  //       firstDate: DateTime(2015),
-  //       lastDate: DateTime(2121));
-  //
-  //   if (pickerDate != null) {
-  //     setState(() {
-  //       _selectedDate = pickerDate;
-  //       print(_selectedDate);
-  //     });
-  //   } else {
-  //     print("It's null or something is wrong.");
-  //   }
-  // }
 
   _showTimePicker() {
     return showTimePicker(
@@ -490,8 +451,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         initialTime: TimeOfDay(
           hour: int.parse(_Time.split(":")[0]),
           minute: int.parse(_Time.split(":")[1].split(" ")[0]),
-        )
-    );
+        ));
   }
 
   _getTimeFromUser({required bool isStartTime}) async {

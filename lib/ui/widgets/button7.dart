@@ -1,60 +1,45 @@
 import 'dart:io';
 import 'package:flutter_to_do_app/controllers/button4_controller.dart';
-
-
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-
-import '../theme.dart';
-
+import 'package:flutter_to_do_app/services/constants.dart';
 
 class CameraButton extends StatelessWidget {
   File? pickedFile;
   final ImagePicker imagePicker = ImagePicker();
   final Button5Controller _buttonController = Get.put(Button5Controller());
- // final Button5Controller _buttonController = Get.find();
-
   CameraButton({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       alignment: Alignment.center,
       children: [
-
-
-         GestureDetector(
-
-               child:Container(
-                    width: 150,
-                   height: 50,
-                     decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: primaryClr
-                      ),
-
-
-
-                      child: Positioned(
-                            bottom: 0,
-                             child: InkWell(
-                            child: Icon(Icons.camera),
-                          onTap: () {
-                          print("Camera clicked");
-                          showModalBottomSheet(
-                            context: context,
-                             builder: (context) => bottomSheet(context),
+        GestureDetector(
+            child: Container(
+          width: 150,
+          height: 50,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15), color: Colors.green),
+          child: Positioned(
+            bottom: 0,
+            child: InkWell(
+              child: Icon(Icons.camera),
+              onTap: () {
+                print("Camera clicked");
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => bottomSheet(context),
                 );
               },
             ),
           ),
-               )    )    ,
-             ],
+        )),
+      ],
     );
   }
 
@@ -149,7 +134,29 @@ class CameraButton extends StatelessWidget {
 
     Get.back();
 
+    try {
+      // Generate a unique file name
+      final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+      // Upload the image file to Firebase Storage
+      final storageRef = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child(fileName);
+      final uploadTask = storageRef.putFile(pickedFile!);
+
+      // Wait for the upload task to complete
+      await uploadTask;
+
+      // Get the download URL of the uploaded image
+      final downloadURL = await storageRef.getDownloadURL();
+      imageURL = downloadURL;
+      // Continue with any other logic you need
+    } catch (e) {
+      // Handle any errors that occur during the upload process
+      print('Error uploading image: $e');
+    }
+
     print("pickedFile");
   }
 }
-

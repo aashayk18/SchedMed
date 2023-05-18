@@ -4,6 +4,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_to_do_app/services/notification_services.dart';
 import 'package:flutter_to_do_app/services/theme_services.dart';
 import 'package:flutter_to_do_app/ui/theme.dart';
+import 'package:flutter_to_do_app/ui/welcome_page.dart';
 import 'package:flutter_to_do_app/ui/widgets/button.dart';
 import 'package:flutter_to_do_app/ui/widgets/task_tile.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_to_do_app/controllers/date_controller.dart';
 
+import '../controllers/auth_controller.dart';
 import '../controllers/task_controller.dart';
 import '../models/task.dart';
 import 'add_task_bar.dart';
@@ -26,6 +28,8 @@ class HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
   final _taskController = Get.put(TaskController());
   var notifyHelper;
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
 
   // List<Reference> references;
 
@@ -41,43 +45,10 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final dateSynchController = Get.put(DateSynchController());
+
     return Scaffold(
       appBar: _appBar(context),
       backgroundColor: context.theme.backgroundColor,
-
-      // adding the bottom navigation bar
-      
-      //commented out the bottom navigation bar
-//       bottomNavigationBar: SizedBox(
-//         height: 65,
-//         child: BottomNavigationBar(
-//           backgroundColor: Color(0xFFD3D3D3),
-//           items: const [
-//             BottomNavigationBarItem(
-//                 icon: Icon(
-//                   Icons.home_filled,
-//                   size: 35,
-//                   color: primaryClr,
-//                 ),
-//                 label: ''),
-//             BottomNavigationBarItem(
-//                 icon: Icon(
-//                   Icons.local_hospital_rounded,
-//                   size: 35,
-//                   color: primaryClr,
-//                 ),
-//                 label: ''),
-//             BottomNavigationBarItem(
-//                 icon: Icon(
-//                   Icons.person_rounded,
-//                   size: 35,
-//                   color: primaryClr,
-//                 ),
-//                 label: ''),
-//           ],
-//         ),
-//       ),
-
       body: Column(
         children: [
           _addTaskBar(),
@@ -108,126 +79,70 @@ class HomePageState extends State<HomePage> {
               Task task = _taskController.taskList[index];
               print(task.toJson());
               if (task.repeat == 'Daily') {
-                DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                DateTime date =
+                    DateFormat.jm().parse(task.startTime.toString());
                 var myTime = DateFormat("HH:mm").format(date);
                 notifyHelper.scheduledNotification(
                     int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
-                    task
-                );
+                    task);
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
                         child: FadeInAnimation(
                             child: Row(children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    _showBottomSheet(context, task);
-                                  },
-                                  child: TaskTile(task))
-                            ]))));
+                      GestureDetector(
+                          onTap: () {
+                            _showBottomSheet(context, task);
+                          },
+                          child: TaskTile(task))
+                    ]))));
               }
-              
-              //testing code for weekly repeat setting
-              
-              // if (task.repeat == 'Weekly') {
-              //     DateTime date = DateFormat.jm().parse(task.startTime.toString());
-              //     var myTime = DateFormat("HH:mm").format(date);
-              //     notifyHelper.scheduledNotification(
-              //         int.parse(myTime.toString().split(":")[0]),
-              //         int.parse(myTime.toString().split(":")[1]),
-              //         task
-              //     );
-              //     return AnimationConfiguration.staggeredList(
-              //         position: index,
-              //         child: SlideAnimation(
-              //             child: FadeInAnimation(
-              //                 child: Row(children: [
-              //                   GestureDetector(
-              //                       onTap: () {
-              //                         _showBottomSheet(context, task);
-              //                       },
-              //                       child: TaskTile(task))
-              //                 ]))));
-              //
-              // }
-              
-              //testing code for monthly repeat setting
-              
-              // if (task.repeat == 'Monthly') {
-              //   DateTime date = DateFormat.jm().parse(task.startTime.toString());
-              //   var myTime = DateFormat("HH:mm").format(date);
-              //   notifyHelper.scheduledNotification(
-              //       int.parse(myTime.toString().split(":")[0]),
-              //       int.parse(myTime.toString().split(":")[1]),
-              //       task
-              //   );
-              //   return AnimationConfiguration.staggeredList(
-              //       position: index,
-              //       child: SlideAnimation(
-              //           child: FadeInAnimation(
-              //               child: Row(children: [
-              //                 GestureDetector(
-              //                     onTap: () {
-              //                       _showBottomSheet(context, task);
-              //                     },
-              //                     child: TaskTile(task))
-              //               ]))));
-              //
-              // }
-              
-//               if (task.date == DateFormat.yMd().format(_selectedDate)) {
-//                 DateTime date = DateFormat.jm().parse(task.startTime.toString());
-//                 var myTime = DateFormat("HH:mm").format(date);
-//                 notifyHelper.scheduledNotification(
-//                     int.parse(myTime.toString().split(":")[0]),
-//                     int.parse(myTime.toString().split(":")[1]),
-//                     task
-//                 );
-                           
+
               //setting time wiith the 'remind early' functionality
-              
+
               if (task.date == DateFormat.yMd().format(_selectedDate) &&
                   (task.remind == 0 ||
                       task.remind == 5 ||
                       task.remind == 10 ||
                       task.remind == 15 ||
-                      task.remind == 20)
-              ) {
+                      task.remind == 20)) {
                 DateTime date =
-                // ignore: unnecessary_new
-                new DateFormat.jm().parse(task.startTime.toString());
+                    new DateFormat.jm().parse(task.startTime.toString());
                 var reminddate = date.subtract(task.remind == 5
                     ? const Duration(days: 0, hours: 0, minutes: 5, seconds: 0)
                     : task.remind == 10
-                    ? const Duration(
-                    days: 0, hours: 0, minutes: 10, seconds: 0)
-                    : task.remind == 15
-                    ? const Duration(
-                    days: 0, hours: 0, minutes: 15, seconds: 0)
-                    : task.remind == 20
-                    ? const Duration(
-                    days: 0, hours: 0, minutes: 20, seconds: 0)
-                    :const Duration(
-                    days: 0, hours: 0, minutes: 00, seconds: 0));
+                        ? const Duration(
+                            days: 0, hours: 0, minutes: 10, seconds: 0)
+                        : task.remind == 15
+                            ? const Duration(
+                                days: 0, hours: 0, minutes: 15, seconds: 0)
+                            : task.remind == 20
+                                ? const Duration(
+                                    days: 0, hours: 0, minutes: 20, seconds: 0)
+                                : const Duration(
+                                    days: 0,
+                                    hours: 0,
+                                    minutes: 00,
+                                    seconds: 0));
                 var myTime = DateFormat('HH:mm').format(reminddate);
                 print(myTime);
                 notifyHelper.scheduledNotification(
                     int.parse(myTime.toString().split(":")[0]),
                     int.parse(myTime.toString().split(":")[1]),
                     task);
-              
+
                 return AnimationConfiguration.staggeredList(
                     position: index,
                     child: SlideAnimation(
                         child: FadeInAnimation(
                             child: Row(children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    _showBottomSheet(context, task);
-                                  },
-                                  child: TaskTile(task))
-                            ]))));
+                      GestureDetector(
+                          onTap: () {
+                            _showBottomSheet(context, task);
+                          },
+                          child: TaskTile(task))
+                    ]))));
               } else {
                 return Container();
               }
@@ -252,13 +167,13 @@ class HomePageState extends State<HomePage> {
           color: Get.isDarkMode ? darkGreyClr : Colors.white,
           child: Column(children: [
             Container(
-                height: 6,
+                height: 5,
                 width: 120,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color:
-                    Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
-       /*     Spacer(),
+                        Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
+            /*     Spacer(),
             task.isCompleted == 1
                 ? Container()
                 : _bottomSheetButton(
@@ -280,7 +195,7 @@ class HomePageState extends State<HomePage> {
               context: context,
             ),
             SizedBox(
-              height: 20,
+              height: 15,
             ),
             _bottomSheetButton(
               label: "Close",
@@ -300,10 +215,10 @@ class HomePageState extends State<HomePage> {
 
   _bottomSheetButton(
       {required String label,
-        required Function()? onTap,
-        required Color clr,
-        bool isClose = false,
-        required BuildContext context}) {
+      required Function()? onTap,
+      required Color clr,
+      bool isClose = false,
+      required BuildContext context}) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
@@ -315,8 +230,8 @@ class HomePageState extends State<HomePage> {
                   width: 2,
                   color: isClose == true
                       ? Get.isDarkMode
-                      ? Colors.grey[600]!
-                      : Colors.grey[300]!
+                          ? Colors.grey[600]!
+                          : Colors.grey[300]!
                       : clr),
               borderRadius: BorderRadius.circular(20),
               color: isClose == true ? Colors.transparent : clr,
@@ -339,7 +254,7 @@ class HomePageState extends State<HomePage> {
           height: 100,
           width: 80,
           initialSelectedDate: DateTime.now(),
-          selectionColor: primaryClr,
+          selectionColor: Colors.green,
           selectedTextColor: Colors.white,
           dateTextStyle: GoogleFonts.lato(
               textStyle: TextStyle(
@@ -356,12 +271,12 @@ class HomePageState extends State<HomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
-            dateSynchController.setDateTime(date);
-            print(date.toString());
-            setState(() {
-              _selectedDate = date;
-            });
-          }),
+        dateSynchController.setDateTime(date);
+        print(date.toString());
+        setState(() {
+          _selectedDate = date;
+        });
+      }),
     );
   }
 
@@ -369,7 +284,7 @@ class HomePageState extends State<HomePage> {
     return Container(
         margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
         child:
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Expanded(
             child: Container(
               child: Column(
@@ -387,7 +302,8 @@ class HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SizedBox(width:60,
+          SizedBox(
+            width: 60,
             child: MyButton(
               label: " + ",
               onTap: () async {
@@ -413,8 +329,6 @@ class HomePageState extends State<HomePage> {
                 body: Get.isDarkMode
                     ? "Activated Light Theme"
                     : "Activated Dark Theme");
-
-            //notifyHelper.scheduledNotification();
           },
           child: Icon(
             Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
@@ -424,6 +338,19 @@ class HomePageState extends State<HomePage> {
       actions: [
         CircleAvatar(
           backgroundImage: AssetImage("images/profile.png"),
+          child: PopupMenuButton<String>(
+            onSelected: (String value) {
+              {
+                AuthController.instance.logOut();
+              };
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'Sign Out',
+                child: Text('Sign Out'),
+              ),
+            ],
+          ),
         ),
         SizedBox(width: 20),
       ],

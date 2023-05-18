@@ -5,7 +5,8 @@ import '../controllers/auth_controller.dart';
 import 'home_page.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  WelcomePage({Key? key}) : super(key: key);
+  var emailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +47,14 @@ class WelcomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  "",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black54,
+                Center(
+                  child: Text(
+                    "You have successfully logged in.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
               ],
@@ -70,11 +73,7 @@ class WelcomePage extends StatelessWidget {
               height: h * 0.07,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(80),
-                image: const DecorationImage(
-                    image: AssetImage(
-                      "images/R.png",
-                    ),
-                    fit: BoxFit.cover),
+                color: Colors.green,
               ),
               child: const Center(
                 child: Text(
@@ -100,11 +99,7 @@ class WelcomePage extends StatelessWidget {
               height: h * 0.07,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(80),
-                image: const DecorationImage(
-                    image: AssetImage(
-                      "images/R.png",
-                    ),
-                    fit: BoxFit.cover),
+                color: Colors.red,
               ),
               child: const Center(
                 child: Text(

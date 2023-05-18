@@ -1,19 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_to_do_app/ui/theme.dart';
-import 'package:flutter_to_do_app/ui/widgets/button.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_to_do_app/ui/widgets/button5.dart';
 import 'package:flutter_to_do_app/ui/widgets/button6.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_sms/flutter_sms.dart';
-import '../controllers/task_controller.dart';
-import '../models/task.dart';
+import 'package:telephony/telephony.dart';
+import 'package:flutter_to_do_app/services/constants.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:just_audio/just_audio.dart';
 
 class NotifiedPage extends StatelessWidget {
   final String? label;
-  NotifiedPage({Key? key, required this.label}) : super(key: key);
-  final _taskController = Get.put(TaskController());
+  String myPhoneNumber = phoneNumber;
+  NotifiedPage({Key? key, required this.label}) : super(key: key) {
+    _methodChannel = MethodChannel(CHANNEL);
+    _methodChannel.setMethodCallHandler((call) async {
+      if (call.method == 'send') {
+        String num = call.arguments['phone'];
+        String msg = call.arguments['msg'];
+        await sendSMS(num, msg);
+        return 'SMS Sent';
+      } else {
+        throw PlatformException(
+          code: 'notImplemented',
+          message: 'Method not implemented.',
+          details: null,
+        );
+      }
+    });
+  }
+
+  static const String CHANNEL = 'sendSms';
+  late MethodChannel _methodChannel;
+  Telephony telephony = Telephony.instance;
+
+  Future<void> sendSMS(String phoneNo, String msg) async {
+    try {
+      await telephony.sendSms(
+        to: phoneNo,
+        message: msg,
+      );
+    } catch (e) {
+      throw PlatformException(
+        code: 'smsError',
+        message: 'SMS not sent.',
+        details: null,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +70,7 @@ class NotifiedPage extends StatelessWidget {
             width: 350,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: Get.isDarkMode ? Colors.white : Colors.green[900]),
+                color: Colors.green[900]),
             child: Container(
                 child: Row(
               children: [
@@ -95,8 +130,11 @@ class NotifiedPage extends StatelessWidget {
                       ),
                       SizedBox (
                         width: 120,
-                        child: IgnoreButton(label: "Ignore", onTap:() =>
-                            _sendSMS("This is a test message!", ["1234567890", "5556787676"])
+                        child: IgnoreButton(label: "Ignore", onTap:() {
+                          sendSMS(phoneNumber,
+                              "ALERT! \n Medication missed. Please remind the patient.");
+                          Get.back();
+                        }
                         ),
                       )
                     ],
@@ -108,70 +146,62 @@ class NotifiedPage extends StatelessWidget {
         ));
   }
 
-  _sendSMS(String message, List<String> recipients) async {
-    String _result = await _sendSMS(message, recipients)
-        .catchError((onError) {
-      print(onError);
-    });
-    print(_result);
-  }
+  // _showBottomSheet(BuildContext context, Task task) {
+  //   Get.bottomSheet(
+  //     Container(
+  //         padding: const EdgeInsets.only(top: 4),
+  //         child: Column(children: [
+  //           Container(
+  //               height: 6,
+  //               width: 120,
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(10))),
+  //                Spacer(),
+  //           task.isCompleted == 1
+  //               ? Container()
+  //               : _bottomSheetButton(
+  //             label: "Task Completed",
+  //             onTap: () {
+  //               _taskController.markTaskCompleted(task.id!);
+  //               Get.back();
+  //             },
+  //             clr: primaryClr,
+  //             context: context,
+  //           ),
+  //         ])),
+  //   );
+  // }
 
-  _showBottomSheet(BuildContext context, Task task) {
-    Get.bottomSheet(
-      Container(
-          padding: const EdgeInsets.only(top: 4),
-          child: Column(children: [
-            Container(
-                height: 6,
-                width: 120,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10))),
-                 Spacer(),
-            task.isCompleted == 1
-                ? Container()
-                : _bottomSheetButton(
-              label: "Task Completed",
-              onTap: () {
-                _taskController.markTaskCompleted(task.id!);
-                Get.back();
-              },
-              clr: primaryClr,
-              context: context,
-            ),
-          ])),
-    );
-  }
-
-  _bottomSheetButton(
-      {required String label,
-      required Function()? onTap,
-      required Color clr,
-      bool isClose = false,
-      required BuildContext context}) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            height: 55,
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-              border: Border.all(
-                  width: 2,
-                  color: isClose == true
-                      ? Get.isDarkMode
-                          ? Colors.grey[600]!
-                          : Colors.grey[300]!
-                      : clr),
-              borderRadius: BorderRadius.circular(20),
-              color: isClose == true ? Colors.transparent : clr,
-            ),
-            child: Center(
-              child: Text(
-                label,
-                style: isClose
-                    ? titleStyle
-                    : titleStyle.copyWith(color: Colors.white),
-              ),
-            )));
-  }
+  // _bottomSheetButton(
+  //     {required String label,
+  //     required Function()? onTap,
+  //     required Color clr,
+  //     bool isClose = false,
+  //     required BuildContext context}) {
+  //   return GestureDetector(
+  //       onTap: onTap,
+  //       child: Container(
+  //           margin: const EdgeInsets.symmetric(vertical: 4),
+  //           height: 55,
+  //           width: MediaQuery.of(context).size.width * 0.9,
+  //           decoration: BoxDecoration(
+  //             border: Border.all(
+  //                 width: 2,
+  //                 color: isClose == true
+  //                     ? Get.isDarkMode
+  //                         ? Colors.grey[600]!
+  //                         : Colors.grey[300]!
+  //                     : clr),
+  //             borderRadius: BorderRadius.circular(20),
+  //             color: isClose == true ? Colors.transparent : clr,
+  //           ),
+  //           child: Center(
+  //             child: Text(
+  //               label,
+  //               style: isClose
+  //                   ? titleStyle
+  //                   : titleStyle.copyWith(color: Colors.white),
+  //             ),
+  //           )));
+  // }
 }

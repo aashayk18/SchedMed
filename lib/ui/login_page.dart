@@ -1,7 +1,6 @@
 import 'package:flutter_to_do_app/ui/signup_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_to_do_app/ui/welcome_page.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
@@ -13,7 +12,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
@@ -43,9 +41,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Hello",
-                    style: TextStyle(fontSize: 70, fontWeight: FontWeight.bold),
+                  Text(
+                    "SchedMed",
+                    style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold),
                   ),
                   Text("Sign In to your account",
                       style: TextStyle(fontSize: 20, color: Colors.grey[500])),
@@ -119,16 +117,6 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Text("Forget Password",
-                          style:
-                              TextStyle(fontSize: 20, color: Colors.grey[500])),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -139,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
               onTap: () {
                 AuthController.instance.signIn(emailController.text.trim(),
                     passwordController.text.trim());
-                Get.to(() => WelcomePage());
               },
               child: Container(
                 margin: const EdgeInsets.only(right: 100, left: 100),
@@ -147,11 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: h * 0.07,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(80),
-                  image: const DecorationImage(
-                      image: AssetImage(
-                        "images/R.png",
-                      ),
-                      fit: BoxFit.cover),
+                  color: Colors.green,
                 ),
                 child: const Center(
                   child: Text(
